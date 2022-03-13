@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+    <script src="build/js/intlTelInput.js"></script>
+  <script src="build/js/intlTelInput.min.js"></script>
+    <link rel="stylesheet" href="build/css/intlTelInput.css">
+  <link rel="stylesheet" href="build/css/demo.css">
+  <style>
+      .hide{
+          display: none;          
+      }
+      #valid-msg{
+          color: green;
+          font-size: 1.1rem;
+      }
+      #error-msg{
+          color: red;
+          font-size: 1.1rem;
+      }
+  </style>
+</head>
+<body>
+    <h1>International Telephone Input</h1>
+  <!-- <form>
+    
+  </form> -->
+  <input id="phone"  name="phone" type="tel">
+    <!-- <button type="submit">Submit</button> -->
+    <button id="btn">Submit</button>
+    <span id="valid-msg" class="hide">✓ Valid</span>
+    <span id="error-msg" class="hide"></span>
+
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+  <script src="build/js/intlTelInput.js"></script>
+  <script src="build/js/intlTelInput.min.js"></script>
+
+<!-- Use as a jQuery plugin -->
+
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+
+<script src="build/js/intlTelInput-jquery.min.js"></script>
+
+  <script>
+      
+    var input = document.querySelector("#phone");
+    errorMsg = document.querySelector("#error-msg"),
+  validMsg = document.querySelector("#valid-msg");
+
+  var errorMap = ["Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"];
+
+  var reset = function() {
+  input.classList.remove("error");
+  errorMsg.innerHTML = "";
+  errorMsg.classList.add("hide");
+  validMsg.classList.add("hide");
+};
+
+// input.addEventListener('change',(e)=>input.setAttribute('value',e.target.value))
+//     // let btn = document.querySelector('#btn')
+//     btn.addEventListener('click',(e)=> console.log(input.value))
+// //     input.addEventListener("countrychange",function() {
+
+// //   // do something with 
+// //   iti.getSelectedCountryData()
+
+// // });
+
+    
+    var get_phno= window.intlTelInput(input, {
+       allowDropdown: true,
+       autoHideDialCode: false,
+      // autoPlaceholder: "off",
+       dropdownContainer: document.body,
+      // excludeCountries: ["us"],
+       formatOnDisplay: false,
+      geoIpLookup: function(callback) {
+        $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
+          var countryCode = (resp && resp.country) ? resp.country : "";
+          callback(countryCode);
+        });
+      },
+       hiddenInput: "full_number",
+       initialCountry: "auto",
+      // localizedCountries: { 'de': 'Deutschland' },
+      // nationalMode: false,
+      // onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
+       placeholderNumberType: "MOBILE",
+      // preferredCountries: ['cn', 'jp'],
+       separateDialCode: true,
+      utilsScript: "build/js/utils.js",
+    });
+    
+// on blur: validate
+input.addEventListener('blur', function() {
+  reset();
+  if (input.value.trim()) {
+    if (get_phno.isValidNumber()) {
+      validMsg.classList.remove("hide");
+    } else {  
+      input.classList.add("error");
+      var errorCode = get_phno.getValidationError();
+      errorMsg.innerHTML = errorMap[errorCode];
+      errorMsg.classList.remove("hide");
+    }
+  }
+});
+
+// on keyup / change flag: reset
+input.addEventListener('change', reset);
+input.addEventListener('keyup', reset);
+
+
+  </script>
+  <!-- <script>
+      var input = document.querySelector("#phone"),
+  errorMsg = document.querySelector("#error-msg"),
+  validMsg = document.querySelector("#valid-msg");
+
+// here, the index maps to the error code returned from getValidationError - see readme
+var errorMap = ["Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"];
+
+// initialise plugin
+// var iti = window.intlTelInput(input, {
+//   utilsScript: "../../build/js/utils.js?1638200991544"
+// });
+
+var reset = function() {
+  input.classList.remove("error");
+  errorMsg.innerHTML = "";
+  errorMsg.classList.add("hide");
+  validMsg.classList.add("hide");
+};
+
+// on blur: validate
+input.addEventListener('blur', function() {
+  reset();
+  if (input.value.trim()) {
+    if (iti.isValidNumber()) {
+      validMsg.classList.remove("hide");
+    } else {
+      input.classList.add("error");
+      var errorCode = iti.getValidationError();
+      errorMsg.innerHTML = errorMap[errorCode];
+      errorMsg.classList.remove("hide");
+    }
+  }
+});
+
+// on keyup / change flag: reset
+input.addEventListener('change', reset);
+input.addEventListener('keyup', reset);
+  </script> -->
+</body>
+</html>
